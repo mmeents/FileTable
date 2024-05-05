@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTable", "FileTable.csproj", "{9E732AF4-412C-4940-84AB-21B68B87C760}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTable", "src/FileTable.csproj", "{9E732AF4-412C-4940-84AB-21B68B87C760}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

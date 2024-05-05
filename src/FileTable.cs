@@ -3,11 +3,7 @@ using System.Collections.Concurrent;
 using System.Text;
 
 namespace FileTable {
-
-  public enum FileTableState {
-    InActive, Active, InsertEdit, UpdateEdit
-  }
-
+  
   public class FileTable {
     private bool _Active = false;
     public bool Active { get { return GetActive(); } set { SetActive(value); } }
