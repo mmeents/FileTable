@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileTable": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

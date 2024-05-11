@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace FileTable {
+namespace FileTables {
   
   public class FileTable {
     private bool _Active = false;
@@ -41,10 +41,12 @@ namespace FileTable {
     public async Task LoadAsync() {
       if (File.Exists(FileName)) {
         var encoded = await FileName.ReadAllTextAsync();
-        var decoded = Convert.FromBase64String(encoded);
-        this.Package = MessagePackSerializer.Deserialize<TableWirePackage>(decoded);
-        Columns.AsList = this.Package.Columns;
-        Rows.AsList = this.Package.Rows;
+        if (encoded.Length > 0) { 
+          var decoded = Convert.FromBase64String(encoded);
+          this.Package = MessagePackSerializer.Deserialize<TableWirePackage>(decoded);
+          Columns.AsList = this.Package.Columns;
+          Rows.AsList = this.Package.Rows;
+        }
       }
     }
     public void Save() {
