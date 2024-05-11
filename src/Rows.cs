@@ -1,8 +1,9 @@
 ﻿using MessagePack;
 using System.Collections.Concurrent;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace FileTable {
+namespace FileTables {
 
   public static class FldExt {
     public static string AsEncoded(this Field field) {
@@ -60,6 +61,27 @@ namespace FileTable {
       }
       return null;
     }
+
+
+    public static int AsInt32(this string value){ 
+      return int.Parse(value);
+    }
+    public static long AsInt64(this string value) { 
+      return long.Parse(value); 
+    }
+    public static byte[] AsByte(this string value) {
+      return Convert.FromBase64String(value);
+    }
+    public static bool AsBoolean(this string value) { 
+      return Convert.ToBoolean(value);
+    }
+    public static DateTime AsDateTime(this string value) { 
+      return DateTime.Parse(value);
+    }
+    public static Decimal AsDecimal(this string value) { 
+      return Decimal.Parse(value);
+    }
+
   }
 
   public class Field {

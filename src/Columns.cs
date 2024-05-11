@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
 
-namespace FileTable {
+namespace FileTables {
 
-  public enum ColumnType { Null = 0, String = 1, Int32 = 2, DateTime = 3, Boolean = 4, Decimal = 5 }
+  public enum ColumnType { Null = 0, String = 1, Int32 = 2, DateTime = 3, Boolean = 4, Decimal = 5, Byte = 6 }
 
   public class Column {
     public Column(Columns owner) {
@@ -131,6 +131,10 @@ namespace FileTable {
       item.Type = (ColumnType)arr[1].AsInt();
       item.Name = arr[2].AsBase64Decoded();
       return item;
+    }
+
+    public static string? AsString(this object obj) {
+      return Convert.ToString(obj);
     }
 
   }
