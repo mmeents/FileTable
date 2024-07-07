@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FileTables {
 
-  public enum ColumnType { Null = 0, String = 1, Int32 = 2, DateTime = 3, Boolean = 4, Decimal = 5, Byte = 6 }
+  public enum ColumnType { Null = 0, String = 1, Int32 = 2, DateTime = 3, Boolean = 4, Decimal = 5, Byte = 6, Int64 = 7 }
 
   public class Column {
     public Column(Columns owner) {

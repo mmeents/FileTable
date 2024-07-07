@@ -68,7 +68,7 @@ namespace FileTables {
       return col;
     }
 
-    public int AddRow() {
+    public long AddRow() {
       Row ret = new Row(Rows);
       this.Rows[ret.Key] = ret;
       return ret.Key;

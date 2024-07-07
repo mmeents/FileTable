@@ -21,7 +21,7 @@ namespace ProjectTests {
       }
 
       for (var i = 1; i<1000; i++) { 
-        int RowId = testTbl.AddRow();
+        long RowId = testTbl.AddRow();
         testTbl.Rows[RowId]["Id"].Value = i.ToString();
         testTbl.Rows[RowId]["Name"].Value = $"Name {i}";
         testTbl.Rows[RowId]["Value"].Value = $"Value {i}";
@@ -115,7 +115,7 @@ namespace ProjectTests {
       }
     }
     public void Insert(Settings item) {
-      int RowKey = _table.AddRow();
+      long RowKey = _table.AddRow();
       _table.Rows[RowKey]["Id"].Value = item.Id.AsString();
       _table.Rows[RowKey]["Name"].Value = item.Name;
       _table.Rows[RowKey]["Value"].Value = item.Value;
