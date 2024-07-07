@@ -46,7 +46,7 @@ namespace FileTables {
         var vals = encoded.AsBase64Decoded().Parse(" ");
         var len = vals.Length;
         if (len > 0) {
-          var ret = new Row(rows) { Key = vals[0].AsInt() };
+          var ret = new Row(rows) { Key = vals[0].AsInt64() };
           if (len > 1) {
             for (int i = 1; i < len; i++) {
               Field? newField = ret.AsDecoded(vals[i]);
@@ -97,7 +97,7 @@ namespace FileTables {
 
   public class Row : ConcurrentDictionary<string, Field> {
     public Rows Owner;
-    public Int32 Key = 0;
+    public long Key = 0;
     public Row(Rows aOwner) : base() {
       Owner = aOwner;
       foreach (int key in Owner.Cols.Keys.OrderBy(x => x)) {
@@ -134,13 +134,13 @@ namespace FileTables {
     }
   }
 
-  public class Rows : ConcurrentDictionary<int, Row> {
+  public class Rows : ConcurrentDictionary<long, Row> {
     public FileTable Owner;
     public Columns Cols;
-    public new Row? this[Int32 aRK] {
-      get { return (Contains(aRK) ? (Row)base[aRK] : null); }
+    public new Row? this[long rowId] {
+      get { return (Contains(rowId) ? (Row)base[rowId] : null); }
       set {
-        var lid = aRK;
+        var lid = rowId;
         if (value != null) {
           if (lid == 0) {
             value.Key = GetNextId();
@@ -162,15 +162,15 @@ namespace FileTables {
       Owner = aOwner;
       Cols = columns;
     }
-    public virtual Boolean Contains(int index) {
+    public virtual Boolean Contains(long rowId) {
       try {
-        return !(base[index] is null);
+        return !(base[rowId] is null);
       } catch {
         return false;
       }
     }
-    public int GetNextId() {
-      int max = 0;
+    public long GetNextId() {
+      long max = 0;
       if (this.Keys.Count > 0) {
         max = this.Select(x => x.Value).Max(x => ((Row)x).Key);
       }
@@ -189,7 +189,7 @@ namespace FileTables {
     public ICollection<string> AsList {
       get {
         List<string> retList = new List<string>();
-        foreach (int index in this.Keys) {
+        foreach (long index in this.Keys) {
           string encoded = this[index]?.AsEncoded() ?? "";
           if (!string.IsNullOrEmpty(encoded)) {
             retList.Add(encoded);
