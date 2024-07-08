@@ -26,7 +26,7 @@
 ```csharp
  public class Settings {  // the entity class that represents the row we are modeling
     public Settings() { }
-    public int Id { get; set; } = 0;
+    public long Id { get; set; } = 0;
     public string Name { get; set; } = "";
     public string Value { get; set; } = "";
   }
@@ -37,7 +37,7 @@
       _table = new FileTable(fileName);
       _table.Active = true;
       if (_table.Columns.Count() == 0) {
-        _table.AddColumn("Id", ColumnType.Int32);
+        _table.AddColumn("Id", ColumnType.Int64);
         _table.AddColumn("Name", ColumnType.String);
         _table.AddColumn("Value", ColumnType.String);
       }
@@ -45,7 +45,7 @@
     public Columns Columns { get { return _table.Columns; }}
     public Rows Rows { get { return _table.Rows; }}
 
-    public Settings? Get(int id) { 
+    public Settings? Get(long id) { 
       if (_table.Rows.Contains(id)) {
         return new Settings(){
           Id = id,
@@ -57,14 +57,14 @@
       }
     }
     public void Insert(Settings item) {
-      int RowKey = _table.AddRow();
+      long RowKey = _table.AddRow();
       _table.Rows[RowKey]["Id"].Value = item.Id.AsString();
       _table.Rows[RowKey]["Name"].Value = item.Name;
       _table.Rows[RowKey]["Value"].Value = item.Value;
       _table.Save();
     }
     public void Update(Settings item) {
-      int RowKey = item.Id;
+      long RowKey = item.Id;
       _table.Rows[RowKey]["Id"].Value = item.Id.AsString();
       _table.Rows[RowKey]["Name"].Value = item.Name;
       _table.Rows[RowKey]["Value"].Value = item.Value;
