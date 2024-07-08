@@ -8,7 +8,7 @@ namespace FileTables {
   public static class FldExt {
     public static string AsEncoded(this Field field) {
       if (field == null) { return ""; }
-      string value = field.Value.AsBase64Encoded();
+      string value = field.Value;
       value = value == ""? "<null>" : value;
       return $"{field.Column.Name.AsBase64Encoded()} {value.AsBase64Encoded()}".AsBase64Encoded();
     }
