@@ -1,6 +1,8 @@
 # FileTable 
 ## Library of routines implementing a tables stored in text files.
-### [install from NuGet link](https://www.nuget.org/packages/FileTable)
+### [install from NuGet link](https://www.nuget.org/packages/FileTables)
+### Latest is 1.0.3, adds try blocks around load and save, empty value handeling.
+### Version 1.0.2 updates row to long.
 * ### By table I mean three properties.
   * ### FileName - to save the location of the file.
   * ### Columns - concurrent dictionary of columns

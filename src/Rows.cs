@@ -8,7 +8,9 @@ namespace FileTables {
   public static class FldExt {
     public static string AsEncoded(this Field field) {
       if (field == null) { return ""; }
-      return $"{field.Column.Name.AsBase64Encoded()} {field.Value.AsBase64Encoded()}".AsBase64Encoded();
+      string value = field.Value.AsBase64Encoded();
+      value = value == ""? "<null>" : value;
+      return $"{field.Column.Name.AsBase64Encoded()} {value.AsBase64Encoded()}".AsBase64Encoded();
     }
     public static Field? AsDecoded(this Row row, string encoded) {
       if (!string.IsNullOrEmpty(encoded)) {
@@ -16,6 +18,7 @@ namespace FileTables {
         var colName = vals[0].AsBase64Decoded();
         var col = row.Owner.Cols.ByName(colName);
         var value = vals[1].AsBase64Decoded();
+        value = value == "<null>"?"":value;        
         if (col != null) {
           return new Field(row, col, value);
         }
@@ -49,10 +52,12 @@ namespace FileTables {
           var ret = new Row(rows) { Key = vals[0].AsInt64() };
           if (len > 1) {
             for (int i = 1; i < len; i++) {
-              Field? newField = ret.AsDecoded(vals[i]);
-              if (newField != null) {
-                ret.Add(newField);
-              }
+              try { 
+                Field? newField = ret.AsDecoded(vals[i]);
+                if (newField != null) {
+                  ret.Add(newField);
+                }
+              } catch { }
             }
           }
           rows[ret.Key] = ret;
@@ -190,22 +195,26 @@ namespace FileTables {
       get {
         List<string> retList = new List<string>();
         foreach (long index in this.Keys) {
-          string encoded = this[index]?.AsEncoded() ?? "";
-          if (!string.IsNullOrEmpty(encoded)) {
-            retList.Add(encoded);
-          }
+          try { 
+            string encoded = this[index]?.AsEncoded() ?? "";
+            if (!string.IsNullOrEmpty(encoded)) {
+              retList.Add(encoded);
+            }
+          } catch { }
         }
         return retList;
       }
       set {
         base.Clear();
         foreach (var encoded in value) {
-          if (!string.IsNullOrEmpty(encoded)) {
-            Row? row = this.AsDecoded(encoded);
-            if (row != null) {
-              this.Add(row);
+          try { 
+            if (!string.IsNullOrEmpty(encoded)) {
+              Row? row = this.AsDecoded(encoded);
+              if (row != null) {
+                this.Add(row);
+              }
             }
-          }
+          } catch { }
         }
       }
     }
