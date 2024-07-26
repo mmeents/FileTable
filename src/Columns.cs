@@ -105,9 +105,7 @@ namespace FileTables {
   }
 
   public static class ColExt {
-    public static string[] Parse(this string content, string delims) {
-      return content.Split(delims.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-    }
+
     public static int AsInt(this string obj) {
       return int.TryParse(obj, out int r) ? r : 0;
     }
