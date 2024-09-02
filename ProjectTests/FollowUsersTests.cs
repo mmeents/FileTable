@@ -16,17 +16,52 @@ public class testFollowUsers {
         Console.WriteLine( row["Uid"].Value + ", " + row["Login"].Value + ", " + row["FollowCount"].Value + ", " + row["FollowStatus"].Value);
       }
 
-      var afu = fu.Get(1);
-      afu.FollowStatus = 1;
-      fu.Update(afu);
-      fu.Save();
-
-      foreach (var row in fu.Rows.Values) {
-        Console.WriteLine(row["Uid"].Value + ", " + row["Login"].Value + ", " + row["FollowCount"].Value + ", " + row["FollowStatus"].Value);
-      }
 
     }
-}
+
+    [TestMethod]
+    public void test2() {
+      string aftn = "C:\\Users\\mmeents\\Desktop\\PrompterFiles\\FollowsUser.ftx";
+      FollowedUserFileTable fu = new FollowedUserFileTable(aftn);
+
+
+        var aresult = fu.Rows.Select(x => x.Value)          
+          .OrderByDescending(x => x["FollowCount"].Value.AsInt32())
+          .Take(1000);
+        if (aresult.Any()) {          
+          var rowNum = 1;
+          foreach (var row in aresult) {            
+            Console.WriteLine( $"  {rowNum}. [{row["Login"].Value}](https://github.com/{row["Login"].Value}) [<img src=\"https://avatars.githubusercontent.com/u/{row["Id"].Value}?v=4\" width=\"120\" height=\"120\">](https://github.com/{row["Login"].Value}) ");
+            rowNum ++;
+          }
+        }
+
+
+    }
+
+    [TestMethod]
+    public void test3Prune() {
+      string aftn = "C:\\Users\\mmeents\\Desktop\\PrompterFiles\\FollowsUser.ftx";
+      FollowedUserFileTable fu = new FollowedUserFileTable(aftn);
+
+
+      var aresult = fu.Rows.Select(x => x.Value)
+        .OrderBy(x => x["FollowCount"].Value.AsInt32())
+        .Where(x => x["FollowCount"].Value.AsInt32()==0);
+        //.Take(10000);
+      if (aresult.Any()) {
+        var rowNum = 1;
+        foreach (var row in aresult) {
+          Console.WriteLine(row["Uid"].Value + ",\"" + row["Login"].Value + "\", " + row["FollowCount"].Value + ", " + row["FollowStatus"].Value);
+          fu.Rows.Remove(row["Uid"].Value.AsInt64(), out Row val);
+          rowNum++;
+        }
+       // fu.Save();
+      }
+
+
+    }
+  }
 
 
 
@@ -56,7 +91,7 @@ public class FollowedUser {
       }
     }
     public FollowedUser? Get(int Uid) {
-      if (_table.Rows.Contains(Uid)) {
+      if (_table.Rows.ContainsKey(Uid)) {
         return new FollowedUser() {
           Uid = _table.Rows[Uid]["Uid"].Value.AsInt64(),
           FollowCount = _table.Rows[Uid]["FollowCount"].Value.AsInt32(),

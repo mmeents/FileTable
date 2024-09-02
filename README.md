@@ -24,3 +24,12 @@
   * below is an example of how one could wrap the FileTable.
   * see sample output from [AppSmith App](https://github.com/mmeents/AppSmith) 
 
+## FileTableViewer 
+  * App to inspect and update FileTables via standard C# GridView Control.
+  * Full source included. 
+  * Work in progress, still needs new row, delete and filtering functions.
+  * Show Grid loading in virtual mode.
+  * Show Grid Sorting in virtual mode.
+  * Show how one could show modification and Save or Cancel for write to disk.
+  
+

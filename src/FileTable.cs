@@ -5,6 +5,7 @@ using System.Text;
 namespace FileTables {
   
   public class FileTable {
+
     private bool _Active = false;
     public bool Active { get { return GetActive(); } set { SetActive(value); } }
     public string FileName { get; set; }

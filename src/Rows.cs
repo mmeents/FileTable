@@ -42,7 +42,6 @@ namespace FileTables {
       }
       return sb.ToString().AsBase64Encoded();
     }
-
     public static Row? AsDecoded(this Rows rows, string encoded) {
       if (rows == null) { throw new ArgumentNullException(nameof(rows)); }
       if (!string.IsNullOrEmpty(encoded)) {
@@ -66,7 +65,6 @@ namespace FileTables {
       }
       return null;
     }
-
 
     public static int AsInt32(this string value){ 
       return int.Parse(value);
@@ -110,6 +108,22 @@ namespace FileTables {
       }
       return "";
     }
+
+    public static Object AsObject(this Field field) {
+      Object ret = "";
+      switch (field.Column.Type) {
+        case ColumnType.Null: ret = ""; break;
+        case ColumnType.String: ret = field.Value; break;
+        case ColumnType.Int32: ret = field.Value.AsInt32(); break;
+        case ColumnType.DateTime: ret = field.Value.AsDateTime(); break;
+        case ColumnType.Boolean: ret = field.Value.AsBoolean(); break;
+        case ColumnType.Decimal: ret = field.Value.AsDecimal(); break;
+        case ColumnType.Byte: ret = field.Value.AsBytes(); break;
+        case ColumnType.Int64: ret = field.Value.AsInt64(); break;
+      }
+      return ret;
+    }
+
   }
 
   public class Field {
@@ -121,6 +135,9 @@ namespace FileTables {
       Column = aCol;
       Value = aValue;
     }
+    public Object AsObj { 
+      get { return this.AsObject(); } 
+      set { this.Value = value?.AsString() ?? ""; } }
   }
 
   public class Row : ConcurrentDictionary<string, Field> {
@@ -136,8 +153,8 @@ namespace FileTables {
       }
     }
     public virtual Boolean Contains(string Key) {
-      try {
-        return !(base[Key] is null);
+      try {  // keept for backward compatable...
+        return base.ContainsKey(Key);
       } catch {
         return false;
       }
@@ -148,13 +165,13 @@ namespace FileTables {
     }
     public new Field? this[string FieldName] {
       get {
-        return Contains(FieldName) ? (Field)base[FieldName] : null;
+        return ContainsKey(FieldName) ? (Field)base[FieldName] : null;
       }
       set {
         if (value != null) {
           base[FieldName] = value;
         } else {
-          if (Contains(FieldName)) {
+          if (ContainsKey(FieldName)) {
             _ = base.TryRemove(FieldName, out _);
           }
         }
@@ -166,7 +183,7 @@ namespace FileTables {
     public FileTable Owner;
     public Columns Cols;
     public new Row? this[long rowId] {
-      get { return (Contains(rowId) ? (Row)base[rowId] : null); }
+      get { return (ContainsKey(rowId) ? (Row)base[rowId] : null); }
       set {
         var lid = rowId;
         if (value != null) {
@@ -180,7 +197,7 @@ namespace FileTables {
           base[lid] = value;
         } else {
           var aKey = base[lid]?.Key ?? 0;
-          if ((aKey != 0) && Contains(aKey)) {
+          if ((aKey != 0) && ContainsKey(aKey)) {
             _ = base.TryRemove(aKey, out _);
           }
         }
@@ -192,7 +209,7 @@ namespace FileTables {
     }
     public virtual Boolean Contains(long rowId) {
       try {
-        return !(base[rowId] is null);
+        return base.ContainsKey(rowId);
       } catch {
         return false;
       }

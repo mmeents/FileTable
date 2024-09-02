@@ -104,7 +104,7 @@ namespace ProjectTests {
     public Rows Rows { get { return _table.Rows; }}
 
     public Settings? Get(int id) { 
-      if (_table.Rows.Contains(id)) {
+      if (_table.Rows.ContainsKey(id)) {
         return new Settings(){
           Id = id,
           Name = _table.Rows[id]["Name"].Value,
