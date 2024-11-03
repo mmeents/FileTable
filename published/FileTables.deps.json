@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "FileTables/1.0.5": {
+      "FileTables/1.0.6": {
         "dependencies": {
           "MessagePack": "2.5.140",
           "MessagePack.Annotations": "2.5.140",
@@ -55,7 +55,7 @@
     }
   },
   "libraries": {
-    "FileTables/1.0.5": {
+    "FileTables/1.0.6": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -22,7 +22,7 @@ namespace FileTables {
     }
     public virtual Boolean Contains(int index) {
       try {
-        return !(base[index] is null);
+        return base.ContainsKey(index);
       } catch {
         return false;
       }

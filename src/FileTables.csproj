@@ -17,7 +17,7 @@
     <RepositoryType>github</RepositoryType>
     <PackageTags>c# MessagePack Table Components Library</PackageTags>
     <BaseOutputPath>bin</BaseOutputPath>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
    </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
