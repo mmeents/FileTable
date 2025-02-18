@@ -48,6 +48,9 @@ namespace FileTables {
           Columns.AsList = this.Package.Columns;
           Rows.AsList = this.Package.Rows;
         }
+        if (!_Active) {
+          _Active = true;
+        }
       }
     }
     public void Save() {

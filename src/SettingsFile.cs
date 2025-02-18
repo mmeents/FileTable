@@ -5,43 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileTables.Interfaces;
 
 namespace FileTables {
 
   [MessagePackObject]
   public class SettingProperty {
-    [IgnoreMember]
-    public string Key { get; set; } = "";
-    [IgnoreMember]
-    public string Value { get; set; } = "";
-
     [Key(0)]
-    public byte[] AsBytes {
-      get {
-        var key = (String.IsNullOrEmpty(Key) ? "<NULL>".AsBase64Encoded() : Key.AsBase64Encoded());
-        var val = (string.IsNullOrEmpty(Value) ? "<NULL>".AsBase64Encoded(): Value.AsBase64Encoded());
-        return $"{key} {val}".AsBytes();
-      }
-      set {
-        string bytesAsString = value.AsString();
-        Key = bytesAsString.ParseFirst(" ").AsBase64Decoded();
-        Value = bytesAsString.ParseLast(" ").AsBase64Decoded();
-        if (Key == "<NULL>") { 
-          Key = "";
-        }
-        if (Value == "<NULL>") { 
-          Value = "";
-        }
-      }
-    }
+    public string Key { get; set; } = "";
+    [Key(1)]
+    public string Value { get; set; } = "";
   }
 
   [MessagePackObject]
   public class SettingsPackage {
     [Key(0)]
-    public string FileName { get; set; }="";
+    public string FileName { get; set; } = "";
     [Key(1)]
-    public ICollection<SettingProperty> SettingsList { get; set; } = new List<SettingProperty>();
+    public List<SettingProperty> SettingsList { get; set; } = new List<SettingProperty>();
   }
 
   public class Settings : ConcurrentDictionary<string, SettingProperty> {
@@ -49,7 +30,7 @@ namespace FileTables {
 
     public Settings(ICollection<SettingProperty> asList) : base() {
       AsList = asList;
-    }   
+    }
 
     public virtual new SettingProperty this[string key] {
       get {
@@ -58,6 +39,7 @@ namespace FileTables {
       }
       set { if (value != null) { base[key] = value; } else { Remove(key); } }
     }
+
     public virtual void Remove(string key) {
       if (base.ContainsKey(key)) { _ = base.TryRemove(key, out _); }
     }
@@ -80,9 +62,7 @@ namespace FileTables {
     }
   }
 
-  public interface ILogMsg { 
-    public void LogMsg(string msg);
-  }
+ 
 
   public class SettingsFile {
     private readonly ILogMsg _form1;
@@ -112,20 +92,20 @@ namespace FileTables {
       return n;
     }
     private void SetSettingsToPackage(Settings value) {
-      Package.SettingsList = value.AsList;
+      Package.SettingsList = value.AsList.ToList();
     }
 
     public Settings Settings { get { return GetSettingsFromPackage(); } set { SetSettingsToPackage(value); } }
 
     public void Load() {
-      try { 
-      Task.Run(async () => await this.LoadAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
+      try {
+        Task.Run(async () => await this.LoadAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
       } catch (Exception ex) {
-        _form1.LogMsg($"Load {FileName} Error:"+ex.Message);
+        _form1.LogMsg($"Load {FileName} Error:" + ex.Message);
       }
     }
     public async Task LoadAsync() {
-      if (File.Exists(FileName)) {        
+      if (File.Exists(FileName)) {
         var encoded = await FileName.ReadAllTextAsync();
         var decoded = Convert.FromBase64String(encoded.Replace('?', '='));
         this.Package = MessagePackSerializer.Deserialize<SettingsPackage>(decoded);
@@ -134,18 +114,17 @@ namespace FileTables {
     }
 
     public void Save() {
-      try { 
+      try {
         Task.Run(async () => await this.SaveAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
       } catch (Exception ex) {
         _form1.LogMsg($"Save {FileName} Error:" + ex.Message);
       }
     }
-    public async Task SaveAsync() {      
+    public async Task SaveAsync() {
       byte[] WirePacked = MessagePackSerializer.Serialize(this.Package);
       string encoded = Convert.ToBase64String(WirePacked);
-      await encoded.WriteAllTextAsync(FileName);      
+      await encoded.WriteAllTextAsync(FileName);
     }
-
   }
 
 }
