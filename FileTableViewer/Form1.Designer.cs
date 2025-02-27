@@ -23,7 +23,7 @@
     ///  the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
-      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
       scLvl0 = new SplitContainer();
       panel2 = new Panel();
@@ -41,6 +41,7 @@
       TextErrorLog = new TextBox();
       HideErrorPanel = new Button();
       odMain = new OpenFileDialog();
+      btnRefresh = new ToolStripButton();
       ((System.ComponentModel.ISupportInitialize)scLvl0).BeginInit();
       scLvl0.Panel1.SuspendLayout();
       scLvl0.Panel2.SuspendLayout();
@@ -83,22 +84,22 @@
       // 
       // vrMain
       // 
+      vrMain.AllowUserToAddRows = false;
       vrMain.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
       vrMain.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
       vrMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = SystemColors.Window;
-      dataGridViewCellStyle1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
-      dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-      vrMain.DefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = SystemColors.Window;
+      dataGridViewCellStyle2.Font = new Font("Segoe UI", 10.2F);
+      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+      vrMain.DefaultCellStyle = dataGridViewCellStyle2;
       vrMain.Dock = DockStyle.Fill;
       vrMain.Location = new Point(0, 0);
       vrMain.Name = "vrMain";
       vrMain.RowHeadersWidth = 51;
-      vrMain.RowTemplate.Height = 29;
       vrMain.Size = new Size(867, 213);
       vrMain.TabIndex = 0;
       vrMain.VirtualMode = true;
@@ -124,7 +125,7 @@
       // 
       toolStrip1.Dock = DockStyle.Bottom;
       toolStrip1.ImageScalingSize = new Size(20, 20);
-      toolStrip1.Items.AddRange(new ToolStripItem[] { lbStatus, btnOK, btnCancel });
+      toolStrip1.Items.AddRange(new ToolStripItem[] { btnRefresh, lbStatus, btnOK, btnCancel });
       toolStrip1.Location = new Point(0, 51);
       toolStrip1.Name = "toolStrip1";
       toolStrip1.Size = new Size(872, 27);
@@ -205,7 +206,7 @@
       // LabelErrorCaption
       // 
       LabelErrorCaption.AutoSize = true;
-      LabelErrorCaption.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+      LabelErrorCaption.Font = new Font("Segoe UI", 10.8F);
       LabelErrorCaption.Location = new Point(8, 14);
       LabelErrorCaption.Name = "LabelErrorCaption";
       LabelErrorCaption.Size = new Size(93, 25);
@@ -239,6 +240,16 @@
       odMain.Filter = "AppSmith4Model|*.as4m|All files|*.*";
       odMain.Title = "Open Archinve";
       // 
+      // btnRefresh
+      // 
+      btnRefresh.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      btnRefresh.Image = (Image)resources.GetObject("btnRefresh.Image");
+      btnRefresh.ImageTransparentColor = Color.White;
+      btnRefresh.Name = "btnRefresh";
+      btnRefresh.Size = new Size(29, 24);
+      btnRefresh.Text = "toolStripButton1";
+      btnRefresh.Click += btnRefresh_Click;
+      // 
       // Form1
       // 
       AutoScaleDimensions = new SizeF(8F, 20F);
@@ -248,6 +259,7 @@
       Controls.Add(scLvl0);
       Icon = (Icon)resources.GetObject("$this.Icon");
       Name = "Form1";
+      SizeGripStyle = SizeGripStyle.Show;
       Text = "FileTable Viewer";
       scLvl0.Panel1.ResumeLayout(false);
       scLvl0.Panel2.ResumeLayout(false);
@@ -281,5 +293,6 @@
     private ToolStripLabel lbStatus;
     private ToolStripButton btnOK;
     private ToolStripButton btnCancel;
+    private ToolStripButton btnRefresh;
   }
 }

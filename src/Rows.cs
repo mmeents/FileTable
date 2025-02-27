@@ -1,104 +1,82 @@
-﻿using MessagePack;
+﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
+using System.Threading.Tasks;
 
 namespace FileTables {
-  
-  
-
-  public class Rows : ConcurrentDictionary<long, Row> {
-    public FileTable Owner;
-    public Columns Cols;
-    public Rows(FileTable aOwner, Columns columns) : base() {
-      Owner = aOwner;
-      Cols = columns;
+  public class Rows : ConcurrentDictionary<int, RowModel> {
+    private readonly object _lock = new();
+    private readonly FileTable _owner;
+    public Rows(FileTable owner) : base() {
+      _owner = owner;
     }
-
-    public new Row? this[long rowId] {
-      get { return (ContainsKey(rowId) ? (Row)base[rowId] : null); }
+    public Rows(FileTable owner, IEnumerable<RowModel> rows) : base() {
+      _owner = owner;
+      AsList = rows;
+    }
+    public virtual new RowModel this[int id] {
+      get {
+        return base[id];
+      }
       set {
-        var lid = rowId;
-        if (value != null) {
-          if (lid == 0) {
-            value.Key = GetNextId();
-            lid = value.Key;
-          }
-          if (lid != value.Key) {
-            value.Key = lid;
-          }
-          base[lid] = value;
-        } else {
-          var aKey = base[lid]?.Key ?? 0;
-          if ((aKey != 0) && ContainsKey(aKey)) {
-            _ = base.TryRemove(aKey, out _);
+        lock (_lock) {
+          if (value != null) {
+            Add(value);
+          } else {
+            Remove(id);
           }
         }
       }
     }
-
-    public virtual Boolean Contains(long rowId) {
-      try {
-        return base.ContainsKey(rowId);
-      } catch {
-        return false;
-      }
-    }
-
-    public long GetNextId() {
-      long max = 0;
+    public int GetNextId() {
+      int max = 0;
       if (this.Keys.Count > 0) {
-        max = this.Select(x => x.Value).Max(x => ((Row)x).Key);
+        max = this.Select(x => x.Value).Max(x => x.Id);
       }
       return max + 1;
     }
-
-    public Row Add(Row row) {
-      row.Owner = this;
-      if (row.Key == 0) {
-        row.Key = GetNextId();
-      }
-      base[row.Key] = row;
-      return (Row)row;
-    }
-
-    public void Remove(long rowId) {
-      if (Contains(rowId)) {
-        _ = base.TryRemove(rowId, out _);
-      }
-    }
-
-    public ICollection<string> AsList {
-      get {
-        List<string> retList = new List<string>();
-        foreach (long index in this.Keys) {
-          try { 
-            string encoded = this[index]?.AsEncoded() ?? "";
-            if (!string.IsNullOrEmpty(encoded)) {
-              retList.Add(encoded);
-            }
-          } catch { }
+    public RowModel Add(RowModel row) {
+      lock (_lock) {        
+        if (row.Id == 0) {
+          row.Id = GetNextId();
         }
-        return retList;
+        base[row.Id] = row;
+        row.Owner = _owner;
+        row.RowFields = new Fields( _owner.GetFieldsOfRow(row.Id), _owner.Columns);
+        return row;
+      }
+    }
+    public void Remove(int id) {
+      lock (_lock) {
+        
+        if (ContainsKey(id)) {
+          _ = base.TryRemove(id, out _);
+        }
+      }
+    }
+    public void Remove(RowModel row) {
+      lock (_lock) {
+        if (row == null) return;
+        if (ContainsKey(row.Id)) {
+          _ = base.TryRemove(row.Id, out _);
+        }
+      }
+    }
+    public IEnumerable<RowModel> AsList {
+      get {
+        return this.Select(x => x.Value);
       }
       set {
-        base.Clear();
-        foreach (var encoded in value) {
-          try { 
-            if (!string.IsNullOrEmpty(encoded)) {
-              Row? row = this.AsDecoded(encoded);
-              if (row != null) {
-                this.Add(row);
-              }
-            }
-          } catch { }
+        lock (_lock) {
+          if (value == null) return;
+          foreach (var item in value) {
+            Add(item);
+          }
         }
       }
     }
+
   }
-
- 
-
-
-
 }

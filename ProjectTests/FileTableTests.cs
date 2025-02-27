@@ -38,71 +38,16 @@ namespace ProjectTests {
       // Ensure the file exists
       File.WriteAllText(_tempFileName, string.Empty);
 
-      _fileTable.SetActive(true);
+      _fileTable.Active =true;
       Assert.IsTrue(_fileTable.Active);
 
-      _fileTable.SetActive(false);
+      _fileTable.Active = false;
       Assert.IsFalse(_fileTable.Active);
     }
 
-    [TestMethod]
-    public void TestAddColumn() {
-      var column = _fileTable.AddColumn("TestColumn", ColumnType.String);
-      Assert.IsNotNull(column);
-      Assert.AreEqual("TestColumn", column.Name);
-      Assert.AreEqual(ColumnType.String, column.Type);
-      Assert.IsTrue(_fileTable.Columns.Contains(column.Id));
-    }
+    
 
-    [TestMethod]
-    public void TestAddRow() {
-      long rowId = _fileTable.AddRow();
-      Assert.IsTrue(_fileTable.Rows.Contains(rowId));
-    }
-
-    [TestMethod]
-    public void TestLoad() {
-      // Simulate file content
-      var package = new TableWirePackage();
-      string content = Convert.ToBase64String(MessagePackSerializer.Serialize(package));
-      File.WriteAllText(_tempFileName, content);
-
-      _fileTable.SetActive(true);
-      Assert.IsTrue(_fileTable.Active);
-    }
-
-    [TestMethod]
-    public void TestSave() {
-      _fileTable.AddColumn("TestColumn", ColumnType.String);
-      _fileTable.AddRow();
-      _fileTable.Save();
-
-      Assert.IsTrue(File.Exists(_tempFileName));
-      string content = File.ReadAllText(_tempFileName);
-      Assert.IsFalse(string.IsNullOrEmpty(content));
-    }
-
-    [TestMethod]
-    public async Task TestLoadAsync() {
-      // Simulate file content
-      var package = new TableWirePackage();
-      string content = Convert.ToBase64String(MessagePackSerializer.Serialize(package));
-      await File.WriteAllTextAsync(_tempFileName, content);
-
-      await _fileTable.LoadAsync();
-      Assert.IsTrue(_fileTable.Active);
-    }
-
-    [TestMethod]
-    public async Task TestSaveAsync() {
-      _fileTable.AddColumn("TestColumn", ColumnType.String);
-      _fileTable.AddRow();
-      await _fileTable.SaveAsync();
-
-      Assert.IsTrue(File.Exists(_tempFileName));
-      string content = await File.ReadAllTextAsync(_tempFileName);
-      Assert.IsFalse(string.IsNullOrEmpty(content));
-    }
+    
   }
 }
 

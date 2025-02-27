@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
-    Microsoft ResX Schema 
+    Microsoft ResX Schema
 
     Version 2.0
 
@@ -18,7 +18,7 @@
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
     <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
     <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing"">Blue</data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
     <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
         <value>[base64 mime encoded serialized .NET Framework object]</value>
     </data>
@@ -48,7 +48,7 @@
     value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
     value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
@@ -121,6 +121,21 @@
     <value>126, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnRefresh.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIISURBVDhPnVLNS5RhEJ/FoJOCq3nYSCKvhodF8Cao636Y
+        XlKL1vzAi5081KFDHVQ2191VlCjb1UhN8d2XMjoYZSDomqmZuK2ywn4cRI9B/gU/Z/Z918wsP34wPDPz
+        zO83zwwPnQZVHvpp9xL08OxoGSrA5vYoyrtPIWL1kFLZQ6hwszHByn7fNGFq6TK+JV+g7H8idq8Bw/M2
+        LMYbsJR04mvyDhYTToRiDfCHCOrqJfZdsHmOEbFzUl0vxvvoVUxGMjG5kQmFTfzxcBYCK4RgJAefo/f/
+        Fqj2ZTx7MmOCErsI1yyhZYRwd1gbQYT7l1k8bsS7SGsqxxSzxtRRxRt+tUV4yLNaXLRTco86OS1FKasd
+        yIa6cROVvBc99yeqewkiUvqA/BwWsuXafDR2g/Nyb++mXYfvN9nhJUXqhSexIN3NJIF0CkZqUDdgTBdc
+        ZzMzscfqpl/yUnmxiGjXhyAzvgk3QU1ko58XJx/IwrlG3knbBMGzQFASF9A1k4fyRwZVp2mQ7X6MtiO4
+        acTQd8LLNcJImDD6QzvFprau4PVqES/XIN3zNaYOEZiPdSC4lgs/d5qL3UIoXo+FRD2+JPlkPzBXAR7l
+        YB9HYZbvuhx/ircrJvR9INx+TnAOUopk4V9Z9pg+SZ1WfjxSIvL3mwMF6U6H7RrbiTDL8hxu2tPjc0G6
+        FWnuv0C0D/a6GScyZ3SnAAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="btnOK.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACMAAAAkCAYAAAAD3IPhAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
