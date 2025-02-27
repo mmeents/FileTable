@@ -8,60 +8,8 @@ using System.Threading.Tasks;
 namespace ProjectTests {
   [TestClass]
 public class testFollowUsers {
-    [TestMethod]
-  public void test1() {
-      string aftn = "C:\\Users\\mmeents\\Desktop\\PrompterFiles\\FollowsUser.ftx";
-      FollowedUserFileTable fu = new FollowedUserFileTable(aftn);
-      foreach(var row in fu.Rows.Values ) {
-        Console.WriteLine( row["Uid"].Value + ", " + row["Login"].Value + ", " + row["FollowCount"].Value + ", " + row["FollowStatus"].Value);
-      }
-
-
-    }
-
-    [TestMethod]
-    public void test2() {
-      string aftn = "C:\\Users\\mmeents\\Desktop\\PrompterFiles\\FollowsUser.ftx";
-      FollowedUserFileTable fu = new FollowedUserFileTable(aftn);
-
-
-        var aresult = fu.Rows.Select(x => x.Value)          
-          .OrderByDescending(x => x["FollowCount"].Value.AsInt32())
-          .Take(1000);
-        if (aresult.Any()) {          
-          var rowNum = 1;
-          foreach (var row in aresult) {            
-            Console.WriteLine( $"  {rowNum}. [{row["Login"].Value}](https://github.com/{row["Login"].Value}) [<img src=\"https://avatars.githubusercontent.com/u/{row["Id"].Value}?v=4\" width=\"120\" height=\"120\">](https://github.com/{row["Login"].Value}) ");
-            rowNum ++;
-          }
-        }
-
-
-    }
-
-    [TestMethod]
-    public void test3Prune() {
-      string aftn = "C:\\Users\\mmeents\\Desktop\\PrompterFiles\\FollowsUser.ftx";
-      FollowedUserFileTable fu = new FollowedUserFileTable(aftn);
-
-
-      var aresult = fu.Rows.Select(x => x.Value)
-        .OrderBy(x => x["FollowCount"].Value.AsInt32())
-        .Where(x => x["FollowCount"].Value.AsInt32()==0);
-        //.Take(10000);
-      if (aresult.Any()) {
-        var rowNum = 1;
-        foreach (var row in aresult) {
-          Console.WriteLine(row["Uid"].Value + ",\"" + row["Login"].Value + "\", " + row["FollowCount"].Value + ", " + row["FollowStatus"].Value);
-          fu.Rows.Remove(row["Uid"].Value.AsInt64(), out Row val);
-          rowNum++;
-        }
-       // fu.Save();
-      }
-
-
-    }
-  }
+    
+}
 
 
 
@@ -70,7 +18,7 @@ public class FollowedUser {
   public long Uid { get; set; } = 0;  // this is for the row ID.
   public int FollowCount { get; set; } = 0;
   public int FollowStatus { get; set; } = 0;
-  public long Id { get; set; } = 0;
+  public int Id { get; set; } = 0;
   public string Login { get; set; } = "";
 }
 
@@ -90,92 +38,27 @@ public class FollowedUser {
         _table.AddColumn("Login", ColumnType.String);
       }
     }
-    public FollowedUser? Get(int Uid) {
-      if (_table.Rows.ContainsKey(Uid)) {
-        return new FollowedUser() {
-          Uid = _table.Rows[Uid]["Uid"].Value.AsInt64(),
-          FollowCount = _table.Rows[Uid]["FollowCount"].Value.AsInt32(),
-          FollowStatus = _table.Rows[Uid]["FollowStatus"].Value.AsInt32(),
-          Id = _table.Rows[Uid]["Id"].Value.AsInt64(),
-          Login = _table.Rows[Uid]["Login"].Value,
-        };
-      } else { return null; }
-    }
-
-    public FollowedUser? Get(string login) {
-      var aresult = Rows.Select(x => x.Value)
-        .Where(x => x["Login"].Value == login)
-        .OrderByDescending(x => x["Uid"].Value.AsInt64())
-        .Take(1);
-      if (aresult.Any()) {
-        FollowedUser? result = null;
-        foreach (var row in aresult) {
-          if (row != null) {
-            result = new FollowedUser() {
-              Uid = row["Uid"].Value.AsInt64(),
-              FollowCount = row["FollowCount"].Value.AsInt32(),
-              FollowStatus = row["FollowStatus"].Value.AsInt32(),
-              Id = row["Id"].Value.AsInt64(),
-              Login = row["Login"].Value
-            };
-          }
-          break;
-        }
-        return result;
-      }
-      return null;
-    }
-
-
-    public IEnumerable<FollowedUser> GetNextBatch(int batchCount) {
-      var aresult = Rows.Select(x => x.Value)
-        .Where(x => x["FollowStatus"].Value == "0")
-        .OrderByDescending(x => x["FollowCount"].Value.AsInt32())
-        .Take(batchCount);
-      if (aresult.Any()) {
-        List<FollowedUser> result = new List<FollowedUser>();
-        foreach (var row in aresult) {
-          result.Add(new FollowedUser() {
-            Uid = row["Uid"].Value.AsInt64(),
-            FollowCount = row["FollowCount"].Value.AsInt32(),
-            FollowStatus = row["FollowStatus"].Value.AsInt32(),
-            Id = row["Id"].Value.AsInt64(),
-            Login = row["Login"].Value
-          });
-        }
-        return result;
-      }
-      return null;
-    }
-
+   
 
 
 
     public void Insert(FollowedUser item) {
-      long RowKey = _table.AddRow();
-      _table.Rows[RowKey]["Uid"].Value = RowKey.AsString();
-      _table.Rows[RowKey]["FollowCount"].Value = item.FollowCount.AsString();
-      _table.Rows[RowKey]["FollowStatus"].Value = item.FollowStatus.AsString();
-      _table.Rows[RowKey]["Id"].Value = item.Id.AsString();
-      _table.Rows[RowKey]["Login"].Value = item.Login;
+      var RowKey = _table.AddRow();
+      _table.Rows[RowKey.Id]["Uid"].Value = RowKey.Id;
+      _table.Rows[RowKey.Id]["FollowCount"].Value = item.FollowCount;
+      _table.Rows[RowKey.Id]["FollowStatus"].Value = item.FollowStatus;
+      _table.Rows[RowKey.Id]["Id"].Value = item.Id;
+      _table.Rows[RowKey.Id]["Login"].Value = item.Login;
       //_table.Save();
     }
     public void Update(FollowedUser item) {
-      long RowKey = item.Uid;
-      _table.Rows[RowKey]["Uid"].Value = item.Uid.AsString();
-      _table.Rows[RowKey]["FollowCount"].Value = item.FollowCount.AsString();
-      _table.Rows[RowKey]["FollowStatus"].Value = item.FollowStatus.AsString();
-      _table.Rows[RowKey]["Id"].Value = item.Id.AsString();
+      var RowKey = item.Id;
+      _table.Rows[RowKey]["Uid"].Value = item.Uid;
+      _table.Rows[RowKey]["FollowCount"].Value = item.FollowCount;
+      _table.Rows[RowKey]["FollowStatus"].Value = item.FollowStatus;
+      _table.Rows[RowKey]["Id"].Value = item.Id;
       _table.Rows[RowKey]["Login"].Value = item.Login;
-      _table.Save();
-    }
-    public void Delete(FollowedUser item) {
-      long RowKey = item.Uid;
-      _table.Rows.Remove(RowKey, out Row? _);
-      _table.Save();
-    }
-    public void Save() {
-      _table.Save();
+      _table.SaveToFile();
     }
   }
 }

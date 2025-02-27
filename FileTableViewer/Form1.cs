@@ -1,4 +1,5 @@
 using FileTables;
+using FileTables.Interfaces;
 using System;
 using static System.Net.Mime.MediaTypeNames;
 using FileTableViewer.Models;
@@ -19,7 +20,7 @@ namespace FileTableViewer {
       set { _tableDirty = value; SetSaveCancelState(); }
     }
 
-    private ConcurrentDictionary<int, long> _UiToTableIndex = new ConcurrentDictionary<int, long>();
+    private ConcurrentDictionary<int, int> _UiToTableIndex = new ConcurrentDictionary<int, int>();
     private string _defaultDir = "";
 
 
@@ -109,15 +110,17 @@ namespace FileTableViewer {
 
 
     public void DoLoadVrMain() {
+      _table.Active = false;
+      _table.Active = true;
 
       if (vrMain.Rows.Count > 0) { vrMain.Rows.Clear(); }
       if (vrMain.Columns.Count > 0) { vrMain.Columns.Clear(); }
       if (!toolStrip1.Visible) { toolStrip1.Visible = true; }
       TableDirty = false;
 
-      foreach (var col in _table.Columns.Values.OrderBy(x => x.Id)) {
-        var addedId = vrMain.Columns.Add(col.Name, col.Name);
-        if (col.Name == OrderByColumnName) {
+      foreach (var col in _table.Columns.Values.OrderBy(x => x.Rank)) {
+        var addedId = vrMain.Columns.Add(col.ColumnName, col.ColumnName);
+        if (col.ColumnName == OrderByColumnName) {
           if (SortAsc) {
             vrMain.Columns[addedId].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
           } else {
@@ -129,7 +132,7 @@ namespace FileTableViewer {
       }
       vrMain.RowCount = _table.Rows.Count;
       if (OrderByColumnName == "") {
-        IOrderedEnumerable<long> listRowKeys;
+        IOrderedEnumerable<int> listRowKeys;
         if (SortAsc) {
           listRowKeys = _table.Rows.Keys.OrderBy(x => x);
         } else {
@@ -142,15 +145,15 @@ namespace FileTableViewer {
         }
       } else {
         string IndexName = vrMain.Columns[0].Name;
-        IOrderedEnumerable<Row> listRows;
+        IOrderedEnumerable<RowModel> listRows;
         if (SortAsc) {
-          listRows = _table.Rows.Select(x => x.Value).OrderBy(x => x[OrderByColumnName].AsFieldType());
+          listRows = _table.Rows.Select(x => x.Value).OrderBy(x => x[OrderByColumnName].Value);
         } else {
-          listRows = _table.Rows.Select(x => x.Value).OrderByDescending(x => x[OrderByColumnName].AsFieldType());
+          listRows = _table.Rows.Select(x => x.Value).OrderByDescending(x => x[OrderByColumnName].Value);
         }
         var xRow = 0;
         foreach (var row in listRows) {
-          long key = row[IndexName].Value.AsInt64();
+          int key = row[IndexName].AsInt32();
           _UiToTableIndex[xRow] = key;
           xRow++;
         }
@@ -193,14 +196,14 @@ namespace FileTableViewer {
 
     private void vrMain_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
       var columnName = vrMain.Columns[e.ColumnIndex].Name;
-      var tblIndex = _UiToTableIndex[e.RowIndex];
-      e.Value = _table.Rows[tblIndex]?[columnName]?.AsFieldType() ?? "";
+      var tblIndex = _UiToTableIndex[e.RowIndex]; // todo on refresh, index is missing new rows..
+      e.Value = _table.Rows[tblIndex]?[columnName]?.Value ?? "";
     }
 
     private void vrMain_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
       var columnName = vrMain.Columns[e.ColumnIndex].Name;
       var tblIndex = _UiToTableIndex[e.RowIndex];
-      _table.Rows[tblIndex][columnName].Value = e.Value?.AsString() ?? "";
+      _table.Rows[tblIndex][columnName].Value = e.Value ?? "";
       TableDirty = true;
     }
 
@@ -232,7 +235,7 @@ namespace FileTableViewer {
     }
     private void btnOK_Click(object sender, EventArgs e) {
       if (_table != null) {
-        _table.Save();
+        _table.SaveToFile();
         TableDirty = false;
       }
     }
@@ -243,6 +246,14 @@ namespace FileTableViewer {
         _table.Active = true;
         DoLoadVrMain();
       }
+    }
+
+    private void btnRefresh_Click(object sender, EventArgs e) {
+      if (_table != null) {
+        _table.Active = false;
+        _table.Active = true;
+        DoLoadVrMain();
+      }      
     }
   }
 }

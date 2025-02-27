@@ -8,6 +8,7 @@ Install the library from NuGet:
 [FileTables on NuGet](https://www.nuget.org/packages/FileTables)
 
 ### Latest Version
+- **2.0.0**: Redesigned Fields gave them there own list instead of nesting them in rows. This reduces the size and increases performance. Reworked the Fields Value to return object instead of having to convert.
 - **1.0.6**: Adds Unit Tests for code coverage, copilot rework and optimization found within.
 - **1.0.5**: Adds `SettingsFile`, a file-based name-value pair object designed to hold settings for an app.
 - **1.0.4**: Adds try blocks around load and save, and handles empty values.
@@ -20,18 +21,18 @@ Install the library from NuGet:
 
 ## Serialization with MessagePack
 - **Save**: 
-  - Creates a wirepack object with a list of columns and rows.
+  - Creates a wirepack object with a list of columns and rows and Fields.
   - Uses MessagePack to translate the wirepack into a byte array, which is then converted to a Base64 encoded string.
   - Writes the encoded string to a file.
 - **Load**:
   - Reads the encoded string from the file.
   - Decodes the Base64 string to a byte array and deserializes it back to a wirepack object using MessagePack.
-  - Copies the list of columns and rows from the wirepack object to the active model.
+  - Copies the list of fields, columns and rows from the wirepack object to the active model.
 
 ## Usage
-Each `FileTable` can be created from scratch. Setting `Active = true` loads from the file if one exists. If the table does not exist, the developer needs to add the columns before adding rows.
+Each `FileTable` can be created from scratch. Setting `Active = true` loads from the file if one exists. If the table does not exist, the developer needs to add the columns before adding rows. New function called EnsureColumn checks if it exists and adds if it doesn't.     
 Row Usage: 
-```csharp table.Rows[12]["ID"].Value = "12";``` where first index is the row and second is the column name. 
+```csharp table.Rows[12]["ID"].Value = 12;``` where first index is the row and second is the column name. 
 ### Example
 Checkout AppSmith and Apiary they both use `FileTable` for data ID.
 ## FileTableViewer
