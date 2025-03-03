@@ -34,8 +34,9 @@ namespace FileTables {
       set {
         if (Owner == null || columnName == null || columnName.Length == 0) return;
         var columnId = Owner!.GetColumnID(columnName);
-        if (value != null) {         
-          value.ColumnId = columnId;
+        if (columnId == 0) throw new Exception("Column not found");
+        if (value.ColumnId != columnId) throw new Exception("ColumnId mismatch");
+        if (value != null) {                   
           RowFields.Add(value);
         } else {          
           var field = RowFields.Values.FirstOrDefault(x => x.ColumnId == columnId);

@@ -121,6 +121,30 @@ namespace FileTables {
       return value.ToString();
     }
 
+
+    public static int AsInt32(this Object value) {
+      return Convert.ToInt32(value);
+    }
+    public static long AsInt64(this Object value) {
+      return Convert.ToInt64(value);
+    }
+    public static byte[] AsBytes(this Object value) {
+      return (byte[])value;
+    }
+    public static bool AsBoolean(this Object value) {
+      return Convert.ToBoolean(value);
+    }
+    public static DateTime AsDateTime(this Object value) {
+      return Convert.ToDateTime(value);
+    }
+    public static Decimal AsDecimal(this Object value) {
+      return Convert.ToDecimal(value);
+    }
+    public static string AsString(this Object value) {
+      return value.ToString();
+    }   
+
+
     #region Date to string 
     /// <summary> Day to string Sortable yyyy-MM-dd</summary>
     /// <returns> string </returns>

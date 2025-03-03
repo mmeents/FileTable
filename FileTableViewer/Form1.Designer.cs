@@ -30,9 +30,12 @@
       vrMain = new DataGridView();
       panel1 = new Panel();
       toolStrip1 = new ToolStrip();
+      btnRefresh = new ToolStripButton();
       lbStatus = new ToolStripLabel();
       btnOK = new ToolStripButton();
       btnCancel = new ToolStripButton();
+      btnAdd = new ToolStripButton();
+      btnRemove = new ToolStripButton();
       label1 = new Label();
       btnBrowse = new Button();
       btnOpenClose = new Button();
@@ -41,7 +44,7 @@
       TextErrorLog = new TextBox();
       HideErrorPanel = new Button();
       odMain = new OpenFileDialog();
-      btnRefresh = new ToolStripButton();
+      lbCurrentRow = new ToolStripLabel();
       ((System.ComponentModel.ISupportInitialize)scLvl0).BeginInit();
       scLvl0.Panel1.SuspendLayout();
       scLvl0.Panel2.SuspendLayout();
@@ -106,6 +109,7 @@
       vrMain.CellValueNeeded += vrMain_CellValueNeeded;
       vrMain.CellValuePushed += vrMain_CellValuePushed;
       vrMain.ColumnHeaderMouseClick += vrMain_ColumnHeaderMouseClick;
+      vrMain.RowEnter += vrMain_RowEnter;
       // 
       // panel1
       // 
@@ -125,12 +129,22 @@
       // 
       toolStrip1.Dock = DockStyle.Bottom;
       toolStrip1.ImageScalingSize = new Size(20, 20);
-      toolStrip1.Items.AddRange(new ToolStripItem[] { btnRefresh, lbStatus, btnOK, btnCancel });
+      toolStrip1.Items.AddRange(new ToolStripItem[] { btnRefresh, lbStatus, btnOK, btnCancel, btnAdd, btnRemove, lbCurrentRow });
       toolStrip1.Location = new Point(0, 51);
       toolStrip1.Name = "toolStrip1";
       toolStrip1.Size = new Size(872, 27);
       toolStrip1.TabIndex = 19;
       toolStrip1.Text = "toolStrip1";
+      // 
+      // btnRefresh
+      // 
+      btnRefresh.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      btnRefresh.Image = (Image)resources.GetObject("btnRefresh.Image");
+      btnRefresh.ImageTransparentColor = Color.White;
+      btnRefresh.Name = "btnRefresh";
+      btnRefresh.Size = new Size(29, 24);
+      btnRefresh.Text = "toolStripButton1";
+      btnRefresh.Click += btnRefresh_Click;
       // 
       // lbStatus
       // 
@@ -163,6 +177,26 @@
       btnCancel.Text = "toolStripButton2";
       btnCancel.ToolTipText = "Cancel Update and reload";
       btnCancel.Click += btnCancel_Click;
+      // 
+      // btnAdd
+      // 
+      btnAdd.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      btnAdd.Image = (Image)resources.GetObject("btnAdd.Image");
+      btnAdd.ImageTransparentColor = Color.Magenta;
+      btnAdd.Name = "btnAdd";
+      btnAdd.Size = new Size(29, 24);
+      btnAdd.Text = "btnAdd";
+      btnAdd.Click += btnAdd_Click;
+      // 
+      // btnRemove
+      // 
+      btnRemove.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      btnRemove.Image = (Image)resources.GetObject("btnRemove.Image");
+      btnRemove.ImageTransparentColor = Color.Magenta;
+      btnRemove.Name = "btnRemove";
+      btnRemove.Size = new Size(29, 24);
+      btnRemove.Text = "toolStripButton2";
+      btnRemove.Click += btnRemove_Click;
       // 
       // label1
       // 
@@ -240,15 +274,11 @@
       odMain.Filter = "AppSmith4Model|*.as4m|All files|*.*";
       odMain.Title = "Open Archinve";
       // 
-      // btnRefresh
+      // lbCurrentRow
       // 
-      btnRefresh.DisplayStyle = ToolStripItemDisplayStyle.Image;
-      btnRefresh.Image = (Image)resources.GetObject("btnRefresh.Image");
-      btnRefresh.ImageTransparentColor = Color.White;
-      btnRefresh.Name = "btnRefresh";
-      btnRefresh.Size = new Size(29, 24);
-      btnRefresh.Text = "toolStripButton1";
-      btnRefresh.Click += btnRefresh_Click;
+      lbCurrentRow.Name = "lbCurrentRow";
+      lbCurrentRow.Size = new Size(99, 24);
+      lbCurrentRow.Text = "lbCurrentRow";
       // 
       // Form1
       // 
@@ -294,5 +324,8 @@
     private ToolStripButton btnOK;
     private ToolStripButton btnCancel;
     private ToolStripButton btnRefresh;
+    private ToolStripButton btnAdd;
+    private ToolStripButton btnRemove;
+    private ToolStripLabel lbCurrentRow;
   }
 }

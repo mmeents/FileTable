@@ -45,6 +45,8 @@ namespace FileTableViewer {
         comboBox1.Items.AddRange(smrul.Parse(Environment.NewLine));
         comboBox1.SelectedIndex = 0;
       }
+      btnRemove.Enabled = false;
+      btnAdd.Enabled = false;
     }
 
     delegate void SetLogMsgCallback(string msg);
@@ -111,7 +113,8 @@ namespace FileTableViewer {
 
     public void DoLoadVrMain() {
       _table.Active = false;
-      _table.Active = true;
+      _table.Active = true;    
+      if (vrMain.Enabled) vrMain.Enabled = false;
 
       if (vrMain.Rows.Count > 0) { vrMain.Rows.Clear(); }
       if (vrMain.Columns.Count > 0) { vrMain.Columns.Clear(); }
@@ -139,6 +142,7 @@ namespace FileTableViewer {
           listRowKeys = _table.Rows.Keys.OrderByDescending(x => x);
         }
         var xRow = 0;
+        _UiToTableIndex.Clear();
         foreach (var key in listRowKeys) {
           _UiToTableIndex[xRow] = key;
           xRow++;
@@ -152,17 +156,20 @@ namespace FileTableViewer {
           listRows = _table.Rows.Select(x => x.Value).OrderByDescending(x => x[OrderByColumnName].Value);
         }
         var xRow = 0;
+        _UiToTableIndex.Clear();
         foreach (var row in listRows) {
           int key = row[IndexName].AsInt32();
           _UiToTableIndex[xRow] = key;
           xRow++;
         }
       }
+      vrMain.Enabled = true;
       if (!vrMain.Visible) { vrMain.Visible = true; }
     }
 
     public void DoOpenFileTable() {
       try {
+        if (_table?.Active ?? false) _table.Active = false;
         this.Text = $"Viewing {_fileName}";
         _folder = _fileName.Substring(0, _fileName.Length - (_fileName.ParseLast("\\").Length + 1));
         if (!Directory.Exists(_folder)) {
@@ -179,12 +186,15 @@ namespace FileTableViewer {
         comboBox1.Visible = false;
         btnBrowse.Visible = false;
         label1.Visible = false;
+        btnRemove.Enabled = false;
+        btnAdd.Enabled = true;
       } catch (Exception ex) {
         LogMsg(ex.Message);
       }
     }
 
     private void DoCloseFileTable() {
+      vrMain.Enabled = false;
       vrMain.Visible = false;
       toolStrip1.Visible = false;
       this.Text = "FileTable Viewer";
@@ -195,16 +205,25 @@ namespace FileTableViewer {
     }
 
     private void vrMain_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
+      try { 
       var columnName = vrMain.Columns[e.ColumnIndex].Name;
-      var tblIndex = _UiToTableIndex[e.RowIndex]; // todo on refresh, index is missing new rows..
+      var tblIndex = _UiToTableIndex.ContainsKey(e.RowIndex) ? _UiToTableIndex[e.RowIndex] : 0; // todo on refresh, index is missing new rows..
+      if (tblIndex == 0) { e.Value = ""; return; }
+      if (!_table.Rows.ContainsKey(tblIndex)) { e.Value = ""; return;}
       e.Value = _table.Rows[tblIndex]?[columnName]?.Value ?? "";
+      } catch (Exception ex) {
+        LogMsg(ex.Message);
+      }
     }
-
     private void vrMain_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
+      try { 
       var columnName = vrMain.Columns[e.ColumnIndex].Name;
       var tblIndex = _UiToTableIndex[e.RowIndex];
       _table.Rows[tblIndex][columnName].Value = e.Value ?? "";
       TableDirty = true;
+      } catch (Exception ex) {
+        LogMsg(ex.Message);
+      }
     }
 
     private void vrMain_ColumnSortModeChanged(object sender, DataGridViewColumnEventArgs e) {
@@ -227,9 +246,13 @@ namespace FileTableViewer {
         if (!btnOK.Enabled) btnOK.Enabled = true;
         if (!btnCancel.Enabled) btnCancel.Enabled = true;
         lbStatus.Text = "Status: Updated ";
+        if (btnAdd.Enabled) btnAdd.Enabled = false;
+        if (btnRemove.Enabled) btnRemove.Enabled = false;
       } else {
         if (btnOK.Enabled) btnOK.Enabled = false;
         if (btnCancel.Enabled) btnCancel.Enabled = false;
+        if (btnAdd.Enabled) btnAdd.Enabled = true;
+        if (btnRemove.Enabled) btnRemove.Enabled = true;
         lbStatus.Text = "Status: Browse ";
       }
     }
@@ -237,6 +260,7 @@ namespace FileTableViewer {
       if (_table != null) {
         _table.SaveToFile();
         TableDirty = false;
+        DoOpenFileTable();
       }
     }
 
@@ -244,7 +268,7 @@ namespace FileTableViewer {
       if (_table != null) {
         _table.Active = false;
         _table.Active = true;
-        DoLoadVrMain();
+        DoOpenFileTable();
       }
     }
 
@@ -252,8 +276,41 @@ namespace FileTableViewer {
       if (_table != null) {
         _table.Active = false;
         _table.Active = true;
-        DoLoadVrMain();
-      }      
+        DoOpenFileTable();
+      }
+    }
+
+    private void btnRemove_Click(object sender, EventArgs e) {
+      if (CurrentIndex != 0) {
+        _table.RemoveRow(CurrentIndex);
+        _table.SaveToFile();
+        DoOpenFileTable();
+      }
+      
+    }
+
+    private void btnAdd_Click(object sender, EventArgs e) {
+
+    }
+
+    private int CurrentIndex = 0;
+    private void vrMain_RowEnter(object sender, DataGridViewCellEventArgs e) {
+      if (_table == null) return;
+
+      if (!_table.Active) {
+        lbCurrentRow.Text = "Row: NA";
+        return; }
+      var aIndex = e.RowIndex;
+      var tblIndex = _UiToTableIndex[aIndex];
+      if (_table.Rows.ContainsKey(tblIndex)) {
+        CurrentIndex = tblIndex;
+        var row = _table.Rows[tblIndex];
+        lbCurrentRow.Text = $"Row: {row["Id"].Value}";
+        btnRemove.Enabled = true;
+      } else {
+        lbCurrentRow.Text = $"Row: No Key ";
+        btnRemove.Enabled = false;
+      }
     }
   }
 }

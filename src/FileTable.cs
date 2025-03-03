@@ -86,9 +86,9 @@ namespace FileTables {
 
     public ColumnModel AddColumn(string columnName, ColumnType columnType) {
       Columns tblCols = new(this.Package.Columns);
-      Rows tblRows = new(this, this.Package.Rows);
       Fields tblFields = new(this.Package.Fields, tblCols);
-
+      Rows tblRows = new(this, this.Package.Rows);
+      
       var col = tblCols.Add(new ColumnModel() { 
         ColumnName = columnName, 
         ColumnType = (short)columnType       
@@ -112,12 +112,14 @@ namespace FileTables {
 
     public void RemoveColumn(int columnId) {
       Columns tblCols = new(this.Package.Columns);
-      Rows tblRows = new(this, this.Package.Rows);
       Fields tblFields = new(this.Package.Fields, tblCols);
+      Rows tblRows = new(this, this.Package.Rows);
+      
       foreach (var fld in tblFields.Where(x => x.Value.ColumnId == columnId)) {
         tblFields.Remove(fld.Value);
       }
       tblCols.Remove(columnId);
+
       this.Package.Fields = tblFields.AsList;
       this.Package.Rows = tblRows.AsList;
       this.Package.Columns = tblCols.AsList;
@@ -125,8 +127,8 @@ namespace FileTables {
 
     public RowModel AddRow() {
       Columns tblCols = new(this.Package.Columns);
-      Rows tblRows = new(this, this.Package.Rows);
       Fields tblFields = new(this.Package.Fields, tblCols);
+      Rows tblRows = new(this, this.Package.Rows);      
 
       var row = tblRows.Add(new RowModel(this));
       foreach (var col in this.Package.Columns.OrderBy(x => x.Rank)) {       
@@ -146,8 +148,9 @@ namespace FileTables {
 
     public void RemoveRow(int rowId) {
       Columns tblCols = new(this.Package.Columns);
-      Rows tblRows = new(this, this.Package.Rows);
       Fields tblFields = new(this.Package.Fields, tblCols);
+      Rows tblRows = new(this, this.Package.Rows);
+      
       
       foreach (var fld in tblFields.Where(x => x.Value.RowId == rowId)) {
         tblFields.Remove(fld.Value);
